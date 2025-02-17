@@ -14,8 +14,49 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
+# For Swagger/Redoc
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+
+@api_view(["GET"])
+def health_check(request):
+    """
+    Simple endpoint to confirm the application is running.
+    """
+    return Response({"status": "ok"}, status=status.HTTP_200_OK)
+
+
+# Configure the schema view for drf-yasg
+schema_view = get_schema_view(
+    openapi.Info(
+        title="SpeedAdmin API",
+        default_version="v1",
+        description="API documentation for SpeedAdmin",
+    ),
+    public=True,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    # Health check endpoint
+    path("health/", health_check, name="health-check"),
+    # Swagger endpoints
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    path(
+        "api-doc/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    # Redoc endpoint
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]

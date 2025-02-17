@@ -1,0 +1,22 @@
+# .pre-commit-config.yaml
+
+repos:
+  # Basic housekeeping hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0  # Example pinned version
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # Black for Python code formatting
+  - repo: https://github.com/psf/black
+    rev: 23.7.0  # or the latest stable version
+    hooks:
+      - id: black
+        name: black
+        language_version: python3.12  # or "python3" if you prefer
+        additional_dependencies: []
+        # If you want to pin black in the environment, do:
+        # additional_dependencies:
+        #   - black==23.7.0
